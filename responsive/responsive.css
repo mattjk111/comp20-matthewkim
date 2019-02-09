@@ -1,0 +1,100 @@
+
+
+/* Style Sheet for Homer Responsive Design website, by Matt Kim */
+
+
+
+
+/* above 1600*/
+@media screen 
+  and (min-device-width: 1600px)  
+  and (-webkit-min-device-pixel-ratio: 2)
+  and (min-resolution: 192dpi) 
+{
+	.homer {width:295px; height:295px; 
+	background:url(homer.jpg) 12 -13px;}
+}
+
+
+/* 1600 to 1400 */
+@media screen 
+  and (min-device-width: 1400px) 
+  and (max-device-width: 1600px) 
+  and (-webkit-min-device-pixel-ratio: 2)
+  and (min-resolution: 192dpi) 
+{
+	.homer {width:295px; height:295px; 
+	background:url(homer.jpg) 319 13px;}
+}
+
+
+/* 1400 to 1200 */
+@media screen 
+  and (min-device-width: 1200px) 
+  and (max-device-width: 1400px) 
+  and (-webkit-min-device-pixel-ratio: 2)
+  and (min-resolution: 192dpi) 
+ {
+ 	.homer {width:295px; height:295px; 
+	background:url(homer.jpg) 13 -319px;}
+ }
+
+/* 1200 to 1000 */
+@media screen 
+  and (min-device-width: 1200px) 
+  and (max-device-width: 1000px) 
+  and (-webkit-min-device-pixel-ratio: 2)
+  and (min-resolution: 192dpi) 
+ {
+ 	.homer {width:295px; height:295px; 
+	background:url(homer.jpg) 319 -319px;}
+ }
+
+
+/* 1000 to 800 */
+@media screen 
+  and (min-device-width: 1000px) 
+  and (max-device-width: 800px) 
+  and (-webkit-min-device-pixel-ratio: 2)
+  and (min-resolution: 192dpi) 
+ {
+ 	.homer {width:295px; height:295px; 
+	background:url(homer.jpg) 13 -319px;}
+ }
+
+
+/* 800 to 600 */
+@media screen 
+  and (min-device-width: 1000px) 
+  and (max-device-width: 800px) 
+  and (-webkit-min-device-pixel-ratio: 2)
+  and (min-resolution: 192dpi) 
+ {
+ 	.homer {width:295px; height:295px; 
+	background:url(homer.jpg) 319 13px;}
+ }
+
+
+
+/* 600 to 0 */
+@media screen 
+  and (max-device-width: 600px) 
+  and (-webkit-min-device-pixel-ratio: 2)
+  and (min-resolution: 192dpi) 
+ {
+ 	.homer {width:295px; height:295px; 
+	background:url(homer.jpg) 12 -13px;}
+ }
+
+
+
+
+
+
+
+
+
+
+
+
+
