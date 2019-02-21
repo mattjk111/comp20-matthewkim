@@ -1,0 +1,31 @@
+
+
+h1 {
+	text-align: center;
+	background-color: #F4D03F;
+	margin-left: 20%;
+	margin-right: 20%;
+}
+
+body {
+	font-family: Helvetica,Arial,sans-serif;
+	background-color: #C0C0C0; /* Silver */
+}
+
+video {
+	display: block;
+ 	margin-left: auto;
+	margin-right: auto;
+
+}
+
+
+
+#lyrics {
+    background-color: #F4D03F;
+    text-align: center;
+    color: black;
+    margin-left: 20%;
+	margin-right: 20%;
+
+}
