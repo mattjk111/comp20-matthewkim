@@ -1,1 +1,105 @@
-sdfkjsdflk
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Simple Map</title>
+    <meta name="viewport" content="initial-scale=1.0">
+    <meta charset="utf-8">
+    <style>
+      /* Always set the map height explicitly to define the size of the div
+       * element that contains the map. */
+      #map {
+        height: 100%;
+      }
+      /* Optional: Makes the sample page fill the window. */
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map"></div>
+    <script>
+      var map;
+      function initMap() {
+        map = new google.maps.Map(document.getElementById('map'), {
+          center: {lat: -34.397, lng: 150.644},
+          zoom: 20
+        });
+        //infoWindow = new google.maps.InfoWindow;
+
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(function(position) {
+            var pos = {
+              lat: position.coords.latitude,
+              lng: position.coords.longitude
+            };
+
+            //infoWindow.setPosition(pos);
+            //infoWindow.setContent('Location found.');
+            //infoWindow.open(map);
+            map.setCenter(pos);
+
+            var userIcon = 
+            {
+            	url: "https://orig00.deviantart.net/f876/f/2015/024/0/a/icon_folder_ultimate_spiderman_by_nialixus-d8f61xh.png"
+            	scaledSize: new google.maps.Size(25, 40)
+            };
+
+            var marker = new google.maps.Marker({
+    			position: pos,
+   				map: map,
+    			icon: userIcon
+  			});
+
+
+            getRideData(pos);
+          }, function() {
+            handleLocationError(true, infoWindow, map.getCenter());
+          });
+        } else {
+          // Browser doesn't support Geolocation
+          handleLocationError(false, infoWindow, map.getCenter());
+        }
+      }
+
+	function getRideData(pos) {
+      	var xhr = new XMLHttpRequest();
+		var url = 'https://hans-moleman.herokuapp.com/rides';
+		var params = "username=L5xEUupk&lat=" + pos["lat"] + "&lng=" + pos["lng"];
+
+		xhr.open('POST', url, true);
+
+		xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+
+
+		xhr.onreadystatechange = function() {//Call a function when the state changes.
+    		if(xhr.readyState == 4 && xhr.status == 200) {
+        		alert(xhr.responseText);
+    		}
+		}	
+		xhr.send(params);
+
+		xhr.onload = function () {
+    	// do something to response
+   		console.log(this.responseText);
+   		var data = JSON.parse(this.responseText);
+   		console.log(data);
+		};
+
+
+   	}
+
+      function handleLocationError(browserHasGeolocation, infoWindow, pos) {
+        infoWindow.setPosition(pos);
+        infoWindow.setContent(browserHasGeolocation ?
+                              'Error: The Geolocation service failed.' :
+                              'Error: Your browser doesn\'t support geolocation.');
+        infoWindow.open(map);
+      }
+    </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC9sQaGQMUn1TEZG3C11LjRlpQAppS4WGk&callback=initMap"
+    async defer></script>
+  </body>
+</html>
