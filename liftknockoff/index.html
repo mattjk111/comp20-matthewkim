@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Simple Map</title>
+    <title>Life Knockoff</title>
     <meta name="viewport" content="initial-scale=1.0">
     <meta charset="utf-8">
+    <link rel="stylesheet" href="style.css" type="text/css" />
 
     <script src="https://maps.google.com/maps/api/js?key=AIzaSyAwxlZ555sqW84k_Y4YJ_miMomLVsZtItQ&libraries=geometry"></script>
 
@@ -19,6 +20,7 @@
       var myLat;
       var myLng;
       var minDistance = 10000;
+      var weinerMessage = " | The Weinermobile is nowhere to be seen"
 
 
       function initMap() {
@@ -27,7 +29,6 @@
           center: {lat: 42.406836, lng: -71.121920},
           zoom: 10
         });
-        //infoWindow = new google.maps.InfoWindow;
 
         if (navigator.geolocation) {
           navigator.geolocation.getCurrentPosition(function(position) {
@@ -36,19 +37,11 @@
           	pos = new google.maps.LatLng(myLat, myLng);
 
 
-            //infoWindow.setPosition(pos);
-            //infoWindow.setContent('Location found.');
-            //infoWindow.open(map);
             map.setCenter(pos);
             map.setZoom(16);
 
 
-            console.log(minDistance);
             getRideData(pos);
-            console.log(minDistance);
-
-            
-            //console.log(carData);
 
 
           }, function() {
@@ -60,6 +53,8 @@
         }
       }
 
+
+
 	function getRideData(pos) {
       	var xhr = new XMLHttpRequest();
 		var url = 'https://hans-moleman.herokuapp.com/rides';
@@ -70,23 +65,16 @@
 		xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 
 
-		xhr.onreadystatechange = function() {//Call a function when the state changes.
-    		if(xhr.readyState == 4 && xhr.status == 200) {
-        		alert(xhr.responseText);
+		xhr.onreadystatechange = function() {
 
-	    		console.log(this.responseText);
+    		if(xhr.readyState == 4 && xhr.status == 200) {
+
 				data = JSON.parse(this.responseText);
 
-	   			if ("vehicles" in data) {
-	   				renderVehicles();
 
-	   			}
-	   			else {
-	   				renderPass();
-	   			}
+	   			renderVehicles();
 
 	   			renderMe();
-
     		}
 		}	
 		xhr.send(params);
@@ -105,7 +93,7 @@
     		position: pos,
    			map: map,
     		icon: userIcon,
-    		title: "L5xEUupk" + "| Closest distance: " + minDistance
+    		title: "L5xEUupk | Closest Distance: " + minDistance + weinerMessage
   		});
 
   		var myInfoWindow = new google.maps.InfoWindow();
@@ -120,83 +108,88 @@
 
    	function renderVehicles() {
 
-   		var vehicles = data.vehicles;
+
+   	   	var passIcon = {
+      		url: "https://www.shareicon.net/data/128x128/2016/01/05/232807_uchiha_256x256.png",
+      		scaledSize: new google.maps.Size(40, 40)
+      	};
+
+   		var rideArray;
+   		var rideIcon;
+
+   		if ("vehicles" in data) {
+   			rideArray = data.vehicles;
+   			rideIcon = carIcon;
+   		}
+   		else {
+   			rideArray = data.passengers;
+   			rideIcon = passIcon;
+   		}
    	
       	
+   		for (var i = 0; i < rideArray.length; i++) {
 
-   		for (var i = 0; i < vehicles.length; i++) {
-    		var car = vehicles[i];
 
-    		if (car.username != "WEINERMOBILE") {
-    			var carLat = car["lat"];
-    			var carLng = car["lng"];
+    		var ride = rideArray[i];
 
-    			var carPos = new google.maps.LatLng(carLat, carLng);
 
-      			var distance = 0.000621371192 * google.maps.geometry.spherical.computeDistanceBetween(pos, carPos);
+			var rideLat = ride["lat"];
+			var rideLng = ride["lng"];
 
-      			if  (distance < minDistance) {
-      				minDistance = distance;
-      			}
-      			
+			var ridePos = new google.maps.LatLng(rideLat, rideLng);
 
-      			var carMarker = new google.maps.Marker( {
-      				position: carPos,
-      				map: map,
-      				icon: carIcon,
-      				title: "Username: " + car.username + " | Miles from you: " + distance
-      			});
+  			var distance = 0.000621371192 * google.maps.geometry.spherical.computeDistanceBetween(pos, ridePos);
 
-      			var carInfoWindow = new google.maps.InfoWindow();
+  			if  (distance < minDistance) {
+  				minDistance = distance;
+  			}
+  			
 
-      			carMarker.addListener('click', function() {
-          			carInfoWindow.setContent(this.title);
-					carInfoWindow.open(map, this);
-        		});
+  			if (ride.username != "WEINERMOBILE") {
+	  			var rideMarker = new google.maps.Marker( {
+	  				position: ridePos,
+	  				map: map,
+	  				icon: rideIcon,
+	  				title: "Username: " + ride.username + " | Miles from you: " + distance
+	  			});
 
+  			}
+
+    		else {
+    			weinerMessage = " | Weinermobile Distance: " + distance;
+    			var rideMarker = new google.maps.Marker( {
+	  				position: ridePos,
+	  				map: map,
+	  				icon: weinerIcon,
+	  				title: "Username: " + ride.username + " | Miles from you: " + distance
+	  			});
     		}
+
+    		var rideInfoWindow = new google.maps.InfoWindow();
+  			rideMarker.addListener('click', function() {
+      			rideInfoWindow.setContent(this.title);
+				rideInfoWindow.open(map, this);
+    		});
+
+
 
     	}
 
 
    	}
 
-   	function renderPass() {
-
-   		var passIcon = {
-      		url: "https://www.shareicon.net/data/128x128/2016/01/05/232807_uchiha_256x256.png",
-      		scaledSize: new google.maps.Size(40, 40)
-      	};
-
-
-
-   	}
-
-
-      function handleLocationError(browserHasGeolocation, infoWindow, pos) {
-        infoWindow.setPosition(pos);
+    function handleLocationError(browserHasGeolocation, infoWindow, pos) {
+    	infoWindow.setPosition(pos);
         infoWindow.setContent(browserHasGeolocation ?
-                              'Error: The Geolocation service failed.' :
-                              'Error: Your browser doesn\'t support geolocation.');
+                    'Error: The Geolocation service failed.' :
+                    'Error: Your browser doesn\'t support geolocation.');
         infoWindow.open(map);
       }
+
+
     </script>
 
 
-
-    <style>
-      /* Always set the map height explicitly to define the size of the div
-       * element that contains the map. */
-      #map {
-        height: 100%;
-      }
-      /* Optional: Makes the sample page fill the window. */
-      html, body {
-        height: 100%;
-        margin: 0;
-        padding: 0;
-      }
-    </style>
   </head>
   <body onload="initMap()">
 
@@ -205,3 +198,4 @@
     
   </body>
 </html>
+
