@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Assignment 4</title>
+	<meta charset="utf-8">
+	<link href="style.css" rel="stylesheet" />
+</head>
+<body>
+	<h1>Security Briefing: Assignment 4</h1>
+	<h2>Introduction:</h2>
+	<p>The product is a ride sharing service where passengers can see which rides are near them and drivers can see which passengers are near them. Additionally, users can see which drivers tried to access the site and whether passengers are in the system based on username. I have been hired to penetration test and find as many security and privacy problems as I can. </p>
+
+	<h2>Methodology:</h2>
+
+	<p>I first attempted to do black box testing, using curl to send data to the web application, that I thought it might not have prepared for. My initial attempts at XSS were unsuccessful, but my next attempt to do injection into the database worked. Then I did white box testing while looking at my partner’s code. I realized that she didn’t validate her input so I was able to find an error there through curling some incorrect data. Finally, from looking OWASP Top 10 and  found the third flaw in the system that there was no user authentication.</p>
+
+	<h2>Abstract of Findings:</h2>
+	<p>I found three issues with the web app that compromise the security and privacy of the users. First, it is possible to use computer logic when requesting data from the database to cause the database to send you all of the user information from the database and not just one’s own. Additionally, there is no security in determining whether a user is actually who they say they are, so anyone can impersonate someone else. Finally, even though the user should input numbers into the system, when one sends other type of data like strings, the system allows the input to go into the system rather than rejecting it, which is an error.</p>
+
+	<h2>Issues Found:</h2>
+
+
+	<h3>Issue #1: Database Injection</h3>
+	<h4>Location: https://safe-cliffs-82338.herokuapp.com/passenger.json</h4>
+	<h4>Severity: </h4>
+	<p>Medium/High, this error allows anyone to see other’s personal data, and although in this case that data is only username and location, in a different context, that personal data could represent credit card numbers or passwords.</p>
+	<h4>Description:</h4>
+	<p>There is a logic statement [$ne] that is encoded as the passenger username is not equal to something. From there we put a username that we know will not be in the database, the chosen one was JANET since that username is a driver and will never be a passenger. That way, the database returns every passenger that isn’t JANET, which is all of the passengers. This is a clear issue since someone who is not authorized can access all private data in the database. </p>
+	<h4>Proof:</h4>
+	<img src="img/injection.png">
+	<h4>Resolution:</h4>
+	<p>The ways to combat this are to use javascript to limit what users can type in, rather than having the querying be in the search bar. Another option would be to sanitize the input and remove anything that’s not supposed to be there, like statements like this one.</p>
+
+
+	<h3>Issue #2: User Authentication</h3>
+	<h4>Location: https://safe-cliffs-82338.herokuapp.com/rides</h4>
+	<h4>Severity: High</h4>
+	<p>It is very dangerous for a user to be able to imporsonate anyone else on this site and receive all of their data, which is why this deserves a high severity rating.</p>
+	<h4>Description:</h4>
+	<p>This app does not require any verification that the person who gives the username is actually who they say they are. This is very dangerous for obvious reasons. Here I wrote that my name is elonmusk when it’s not actually that, but the system authenticates it anyways. </p>
+	<h4>Proof:</h4>
+	<img src="img/auth-error.png">
+	<img src="img/auth-error1.png">
+	<h4>Resolution:</h4>
+	<p>The web app could keep a separate more secure database for user authentication and scan to make sure the username is in the database as well as require passwords to ensure that the user is who they say they are.</p>
+
+
+	<h3>Issue #3: Input Type Error</h3>
+	<h4>Location: https://safe-cliffs-82338.herokuapp.com/rides</h4>
+	<h4>Severity: Medium</h4>
+	<p>This has less of a severe rating because although data that doesn't make sense makes it into the database, it does not affect the client side since there is no way for it to appear on the map. This would be much worse if it were feeding incorrect data into the database, instead of data that is incomplete</p>
+	<h4>Description:</h4>
+	<p>The program should take in floats as the data type for the location, and more importantly, if floats are not given, the service should reject the data and not add it to the database. However, this program takes in data even when floats are not given. I sent in a request with non-floats and the program still took my data, as seen in the screenshots.</p>
+	<h4>Proof:</h4>
+	<img src="img/float-error.png">
+	<img src="img/float-error1.png">
+	<h4>Resolution:</h4>
+	<p> A simple if-else statement to make sure that none of the data values are null would do to make sure that bad data doesn’t get into the database.</p>
+
+
+	<h2>Conclusion:</h2>
+	<p>Future considerations and recommendations would be to think about how user authentication should be handled, whether another service/API should be used, at the cost of handling security flaws from 3rd party applications. Additionally, it would be helpful to implement processes for the float input rejection and database injection defense, at no foreseeable cost. Possibly it would be beneficial to test using other programs and not just manually, so I would recommend testing the application with tools such as Burpsuite or OWASP ZAP.</p>
+
+	<h2>References:</h2>
+	<p>https://sites.google.com/site/iasoncs/home/database-security/nosql-injection</p>
+
+</body>
+</html>
